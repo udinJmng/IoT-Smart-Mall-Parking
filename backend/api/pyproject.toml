@@ -7,7 +7,11 @@ authors = [
     { name = "UJ4NG", email = "86789381+udinJmng@users.noreply.github.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "fastapi>=0.162.0",
+    "mysql-connector-python>=26.10.0",
+    "uvicorn>=0.54.0",
+]
 
 [project.scripts]
 api = "api:main"
