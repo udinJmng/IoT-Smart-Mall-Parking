@@ -2,15 +2,24 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import mysql.connector
 from typing import Optional
+import os
+from dotenv import load_dotenv
 
+# Load file .env
+load_dotenv()
 app = FastAPI(title="Smart Parking 'DEMO' API", version="1.0")
+
+DB_HOST = os.getenv("DB_HOST")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="smart_parking"
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_NAME
     )
 
 class SlotUpdate(BaseModel):
@@ -89,4 +98,5 @@ def update_parking_slot(slot_name: str, data: SlotUpdate):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    port = os.getenv("PORT")
+    uvicorn.run("main:app", host="127.0.0.1", port=port, reload=True)
