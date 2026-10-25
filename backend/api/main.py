@@ -31,6 +31,33 @@ def get_parking_status():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/parking/plate/{plat_query}")
+def get_parking_by_plate(plat_query: str):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Pakai LIKE supaya pencarian fleksibel (bisa cari sebagian plat)
+        query = "SELECT * FROM parking_slots WHERE plat LIKE %s"
+        cursor.execute(query, (f"%{plat_query}%",))
+        result = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        if not result:
+            return {
+                "success": False, 
+                "message": f"Kendaraan dengan plat '{plat_query}' tidak ditemukan di slot manapun."
+            }
+            
+        return {
+            "success": True,
+            "data": result
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.put("/api/parking/{slot_name}")
 def update_parking_slot(slot_name: str, data: SlotUpdate):
     try:
